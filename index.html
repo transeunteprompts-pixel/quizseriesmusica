@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Quiz Series 80/90</title>
+  <style>
+    :root{
+      --bg: #0f172a;           /* slate-900 */
+      --card: #111827;         /* gray-900 */
+      --card-2: #0b1220;       /* deepened */
+      --text: #e5e7eb;         /* gray-200 */
+      --muted: #9ca3af;        /* gray-400 */
+      --accent: #22c55e;       /* green-500 */
+      --accent-weak: #ef4444;  /* red-500 */
+      --primary: #60a5fa;      /* blue-400 */
+      --ring: #1f2937;         /* gray-800 */
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: radial-gradient(1200px 800px at 50% -200px, #1e293b 0%, #0f172a 60%, #0b1020 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial;
+      margin: 0;
+    }
+    .wrap {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      padding: 16px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      font-weight: 700;
+      letter-spacing: .2px;
+      opacity: .9;
+    }
+    .progress {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; color: var(--muted);
+      width: 60%;
+      max-width: 520px;
+    }
+    .bar {
+      position: relative; flex: 1;
+      height: 10px;
+      background: #0b1220;
+      border-radius: 999px;
+      overflow: hidden;
+      outline: 1px solid #111827;
+      box-shadow: inset 0 0 0 1px #0b1220;
+    }
+    .bar > i {
+      position: absolute; inset: 0 100% 0 0;
+      background: linear-gradient(90deg, #22d3ee, #60a5fa 40%, #22c55e 100%);
+      transition: inset .25s ease;
+    }
+    .score {
+      font-variant-numeric: tabular-nums;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .card {
+      height: calc(100dvh - 190px);
+      max-height: 640px;
+      background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border-radius: 20px;
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto auto;
+      gap: 12px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+      position: relative;
+    }
+    .index-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-weight: 800; font-size: 24px;
+      padding: 4px 10px; border-radius: 12px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid #1f2937;
+      color: var(--accent-weak);
+      transition: color .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .index-badge.ok {
+      color: var(--accent);
+      background: rgba(20,83,45,.2);
+      border-color: rgba(34,197,94,.35);
+    }
+    .title {
+      font-size: 18px; font-weight: 700; letter-spacing: .3px;
+    }
+    .audio {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--ring);
+      border-radius: 14px;
+      padding: 10px;
+    }
+    .input-row {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px;
+    }
+    input[type="text"] {
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--ring);
+      background: rgba(2,6,23,.55);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    input::placeholder { color: #6b7280; }
+    input:focus {
+      border-color: #334155; box-shadow: 0 0 0 3px rgba(96,165,250,.15);
+    }
+    .button {
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      background: linear-gradient(180deg, #1f2937, #111827);
+      color: var(--text); font-weight: 700;
+      letter-spacing: .2px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .05s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .button:active { transform: translateY(1px) }
+    .button.primary { background: linear-gradient(180deg, #2563eb, #1d4ed8); border-color: #1e40af; }
+    .button.ok { background: linear-gradient(180deg, #16a34a, #15803d); border-color: #166534; }
+    .button.danger { background: linear-gradient(180deg, #dc2626, #b91c1c); border-color: #991b1b; }
+    .hint {
+      font-size: 13px; color: var(--muted);
+      opacity: .8;
+    }
+    .nav {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .pill {
+      font-size: 12px; color: var(--muted);
+      border: 1px solid #1f2937; padding: 6px 10px; border-radius: 999px;
+      background: rgba(255,255,255,.03);
+    }
+    @media (min-width: 680px) {
+      .wrap { max-width: 720px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">🎵 Series Quiz</div>
+      <div class="progress">
+        <div class="bar"><i id="barFill"></i></div>
+        <div class="score" id="score">0/0</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="card" id="card">
+        <div class="index-badge" id="indexBadge">#1</div>
+        <div class="title" id="title">¿Qué serie es?</div>
+        <div class="audio">
+          <audio id="player" controls preload="none"></audio>
+        </div>
+        <div class="input-row">
+          <input type="text" id="answer" placeholder="Escribe el título exacto…" autocomplete="off" autocapitalize="none" autocorrect="off" />
+          <button class="button primary" id="checkBtn">Comprobar</button>
+        </div>
+        <div class="hint" id="hint">
+          Mayúsculas/Minúsculas dan igual. Los acentos SÍ cuentan. Sin pistas 😉
+        </div>
+      </div>
+    </main>
+
+    <div class="footer">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="pill" id="posPill">Tarjeta 1/1</span>
+        <button class="button" id="resetBtn" title="Borrar progreso">Reiniciar</button>
+      </div>
+      <div class="nav">
+        <button class="button" id="prevBtn">⟵ Anterior</button>
+        <button class="button" id="nextBtn">Siguiente ⟶</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const player = $("#player");
+    const answer = $("#answer");
+    const checkBtn = $("#checkBtn");
+    const prevBtn = $("#prevBtn");
+    const nextBtn = $("#nextBtn");
+    const scoreEl = $("#score");
+    const posPill = $("#posPill");
+    const barFill = $("#barFill");
+    const indexBadge = $("#indexBadge");
+    const card = $("#card");
+
+    const LS_KEY = "series_quiz_progress_v1";
+
+    function normalizeJS(s){
+      // Keep diacritics, ignore case, collapse spaces, strip punctuation/symbols (keep letters/numbers/spaces)
+      return s
+        .normalize("NFC")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/[^\p{L}\p{N}\s]/gu, "");
+    }
+
+    async function sha256Hex(str){
+      const enc = new TextEncoder();
+      const bytes = enc.encode(str);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      const arr = Array.from(new Uint8Array(digest));
+      return arr.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    let data = { items: [] };
+    let idx = 0;
+    let progress = {}; // num -> { ok: true, answer: "texto" }
+
+    function loadProgress(){
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) progress = JSON.parse(raw);
+      } catch {}
+    }
+    function saveProgress(){
+      localStorage.setItem(LS_KEY, JSON.stringify(progress));
+    }
+
+    function updateProgressUI(){
+      const total = data.items.length;
+      const done = Object.values(progress).filter(v => v && v.ok).length;
+      scoreEl.textContent = `${done}/${total}`;
+      const fill = (done / total * 100);
+      barFill.style.inset = `0 ${100 - fill}% 0 0`;
+      posPill.textContent = `Tarjeta ${idx + 1}/${total}`;
+      indexBadge.textContent = `#${data.items[idx]?.num ?? (idx+1)}`;
+      if (progress[data.items[idx].num]?.ok){
+        indexBadge.classList.add("ok");
+      } else {
+        indexBadge.classList.remove("ok");
+      }
+    }
+
+    function setCurrent(i){
+      idx = Math.max(0, Math.min(i, data.items.length - 1));
+      const it = data.items[idx];
+      player.src = it.audio; // e.g., "1.wav"
+      player.currentTime = 0;
+      player.play().catch(() => {});
+
+      const st = progress[it.num];
+      if (st?.ok){
+        answer.value = st.answer || "";
+        answer.readOnly = true;
+        checkBtn.classList.add("ok");
+        checkBtn.textContent = "¡Correcto!";
+      } else {
+        answer.value = "";
+        answer.readOnly = false;
+        checkBtn.classList.remove("ok");
+        checkBtn.textContent = "Comprobar";
+      }
+      updateProgressUI();
+    }
+
+    async function check(){
+      const it = data.items[idx];
+      const typed = answer.value;
+      if (!typed.trim()) return;
+
+      const norm = normalizeJS(typed);
+      const h = await sha256Hex(it.salt + norm);
+
+      const ok = (h === it.hash);
+      if (ok){
+        progress[it.num] = { ok: true, answer: typed.trim() };
+        saveProgress();
+        // freeze UI
+        answer.readOnly = true;
+        checkBtn.classList.add("ok");
+        checkBtn.textContent = "¡Correcto!";
+        indexBadge.classList.add("ok");
+        // light haptic
+        if (navigator.vibrate) navigator.vibrate(35);
+      } else {
+        // micro feedback
+        card.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(0)' }], { duration: 180 });
+        if (navigator.vibrate) navigator.vibrate(20);
+      }
+      updateProgressUI();
+    }
+
+    function next(){ setCurrent(idx + 1); }
+    function prev(){ setCurrent(idx - 1); }
+
+    // Swipe support (optional)
+    let touchX = null;
+    const SWIPE_PX = 40;
+    card.addEventListener("touchstart", e => {
+      if (e.touches && e.touches[0]) touchX = e.touches[0].clientX;
+    }, {passive: true});
+    card.addEventListener("touchend", e => {
+      if (touchX == null) return;
+      const x = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : touchX;
+      const dx = x - touchX;
+      if (dx > SWIPE_PX) prev();
+      else if (dx < -SWIPE_PX) next();
+      touchX = null;
+    });
+
+    // Keyboard shortcuts (desktop)
+    window.addEventListener("keydown", e => {
+      if (e.key === "Enter") check();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    });
+
+    checkBtn.addEventListener("click", check);
+    nextBtn.addEventListener("click", next);
+    prevBtn.addEventListener("click", prev);
+    $("#resetBtn").addEventListener("click", () => {
+      if (confirm("¿Seguro que quieres borrar todo el progreso?")){
+        progress = {};
+        saveProgress();
+        setCurrent(idx);
+        updateProgressUI();
+      }
+    });
+
+    (async function init(){
+      loadProgress();
+      try {
+        const res = await fetch("data_hashed.json");
+        data = await res.json();
+      } catch (e) {
+        alert("Falta el archivo data_hashed.json. Ejecuta build_data.py primero.");
+        data = { items: [] };
+      }
+      if (!Array.isArray(data.items)) data.items = [];
+      data.items.sort((a,b) => (a.num||0)-(b.num||0));
+      setCurrent(0);
+      updateProgressUI();
+    })();
+  </script>
+</body>
+</html>
